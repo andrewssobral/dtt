@@ -7,6 +7,8 @@
 
 #include <dtt.h>
 
+using namespace dtt;
+
 void print_line() {
   std::cout << std::string(50, '-') << std::endl;
 }

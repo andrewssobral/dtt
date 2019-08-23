@@ -6,22 +6,24 @@
 #pragma once
 
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include <cstdio>
+#include <cstdlib>
+
 #include <Eigen/Dense>
 #include <armadillo>
 #include <arrayfire.h>
-#include <cstdio>
-#include <cstdlib>
 #include <torch/torch.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/eigen.hpp>
 
 #if CV_MAJOR_VERSION >= 4
 #define CV_BGR2RGB cv::COLOR_BGR2RGB
 #endif
 
+namespace dtt {
 //---------------------------------------------------------------------------
 // OpenCV to Eigen, Armadillo, LibTorch, File
 //---------------------------------------------------------------------------
-#include <opencv2/core/eigen.hpp>
 
 //void cv2eigen(const Mat& src, Eigen::Matrix<_Tp, _rows, _cols, _options, _maxRows, _maxCols>& dst)
 
@@ -145,4 +147,6 @@ cv::Mat libtorch2cv(torch::Tensor &Tin, bool copy=true) {
   } else
     C = cv::Mat(T.size(0), T.size(1), CV_32FC1, T.data<float>());
   return C;
+}
+
 }
