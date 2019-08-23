@@ -1,4 +1,5 @@
 # Data Transfer Tools for C++ Linear Algebra Libraries.
+DTT is a **header-only** library that provides data transfer tools between C++ linear algebra libraries.
 Currently, it supports data transfer between the following libraries:
 * Eigen (>=3.3.x)
 * Armadillo (>=9.x)
@@ -42,3 +43,31 @@ cd dtt && mkdir build && cd build
 cmake -DCMAKE_PREFIX_PATH=$LIBTORCH_HOME ..
 ./dtt_test
 ```
+
+How to use:
+```c++
+#include <dtt.h>
+using namespace dtt;
+// that's all!
+```
+
+List of available functions:
+* From OpenCV:
+* * cv2eigen
+* * cv2arma
+* * cv2libtorch
+
+* From Eigen:
+* * eigen2arma
+* * eigen2af
+* * eigen2cv
+
+* From ArrayFire:
+* * af2eigen
+
+* From Armadillo:
+* * arma2eigen
+* * arma2cv
+
+* From LibTorch:
+* * libtorch2cv
