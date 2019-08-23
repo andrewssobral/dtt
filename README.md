@@ -6,6 +6,17 @@ Currently, it supports data transfer between the following libraries:
 * ArrayFire (>=3.x)
 * LibTorch (PyTorch C++) (>=1.x)
 
+Status:
+
+| From/To   | Eigen | Armadillo | OpenCV | ArrayFire | LibTorch |
+|-----------|:-----:|:---------:|:------:|:---------:|:--------:|
+| Eigen     |   -   |     X     |    X   |     X     |     X    |
+| Armadillo |   X   |     -     |    X   |    TODO   |   TODO   |
+| OpenCV    |   X   |     X     |    -   |    TODO   |   TODO   |
+| ArrayFire |   X   |    TODO   |  TODO  |     -     |   TODO   |
+| LibTorch  |  TODO |    TODO   |  TODO  |    TODO   |     -    |
+
+
 Tested on:
 * MacBook Pro (13-inch, 2017)
 * Mac OS X Mojave (10.14.5), Clang 10 (clang-1000.11.45.5), Xcode 10.1 with the following libraries:
