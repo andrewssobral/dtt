@@ -162,6 +162,78 @@ void test_libtorch_eigen() {
   std::cout << T << std::endl;
 }
 
+void test_opencv_libtorch1() {
+  print_line();
+  std::cout << "Testing OpenCV to LibTorch #1 (copy 3x3 matrix):" << std::endl;
+  // OpenCV
+  cv::Mat C(3, 3, CV_32FC1);
+  cv::randn(C, 0.0f, 1.0f);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // LibTorch
+  torch::Tensor T = cv2libtorch(C);
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // re-check after changes
+  T[0][0] = 0;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  std::cout << "cvMat:\n" << C << std::endl;
+}
+
+void test_opencv_libtorch2() {
+  print_line();
+  std::cout << "Testing OpenCV to LibTorch #1 (no-copy 3x3 matrix):" << std::endl;
+  // OpenCV
+  cv::Mat C(3, 3, CV_32FC1);
+  cv::randn(C, 0.0f, 1.0f);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // LibTorch
+  torch::Tensor T = cv2libtorch(C, false);
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // re-check after changes
+  T[0][0] = 0;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  std::cout << "cvMat:\n" << C << std::endl;
+}
+
+void test_libtorch_opencv1() {
+  print_line();
+  std::cout << "Testing LibTorch to OpenCV (copy 3x3 matrix):" << std::endl;
+  // LibTorch
+  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+  torch::Tensor T = torch::rand({3, 3});
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // OpenCV
+  cv::Mat C = libtorch2cv(T);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // re-check after changes
+  C.at<float>(0,0) = 0;
+  std::cout << "cvMat:\n" << C << std::endl;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+}
+
+void test_libtorch_opencv2() {
+  print_line();
+  std::cout << "Testing LibTorch to OpenCV (no-copy 3x3 matrix):" << std::endl;
+  // LibTorch
+  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+  torch::Tensor T = torch::rand({3, 3});
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // OpenCV
+  cv::Mat C = libtorch2cv(T, false);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // re-check after changes
+  C.at<float>(0,0) = 0;
+  std::cout << "cvMat:\n" << C << std::endl;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+}
+
 void test_libs_conversion() {
   test_opencv_eigen();
   test_eigen_opencv();
@@ -172,6 +244,10 @@ void test_libs_conversion() {
   test_eigen_af();
   test_af_eigen();
   test_libtorch_eigen();
+  test_opencv_libtorch1();
+  test_opencv_libtorch2();
+  test_libtorch_opencv1();
+  test_libtorch_opencv2();
 }
 
 void test_opencv() {

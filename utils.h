@@ -14,8 +14,12 @@
 #include <cstdlib>
 #include <torch/torch.h>
 
+#if CV_MAJOR_VERSION >= 4
+#define CV_BGR2RGB cv::COLOR_BGR2RGB
+#endif
+
 //---------------------------------------------------------------------------
-// OpenCV to Armadillo, Eigen, File
+// OpenCV to Eigen, Armadillo, LibTorch, File
 //---------------------------------------------------------------------------
 #include <opencv2/core/eigen.hpp>
 
@@ -35,6 +39,38 @@ arma::Mat<T> cv2arma(cv::Mat &cvMatIn) {
                       static_cast<arma::uword>(cvMatIn.rows),
                       true,
                       true);
+}
+
+torch::Tensor cv2libtorch(cv::Mat &C, bool copydata=true, bool is_cv_image=false) {
+  int kCHANNELS = C.channels();
+  if (is_cv_image) {
+    if (kCHANNELS == 3) {
+      cv::cvtColor(C, C, CV_BGR2RGB);
+      C.convertTo(C, CV_32FC3, 1.0f / 255.0f);
+    } else // considering channels = 1
+      C.convertTo(C, CV_32FC1, 1.0f / 255.0f);
+    auto T = torch::from_blob(C.data, {1, C.rows, C.cols, kCHANNELS});
+    T = T.permute({0, 3, 1, 2});
+    return T;
+  } else {
+    std::vector<int64_t> dims;
+    at::TensorOptions options(at::kFloat);
+    if (kCHANNELS == 1) {
+      C.convertTo(C, CV_32FC1);
+      dims = {C.rows, C.cols};
+    }
+    else { // considering channels = 3
+      C.convertTo(C, CV_32FC3);
+      dims = {C.rows, C.cols, kCHANNELS};
+    }
+    //auto T = torch::from_blob(C.ptr<float>(), dims, options).clone();
+    //auto T = torch::from_blob(C.data, at::IntList(dims), options);
+    auto T = torch::from_blob(C.data, dims, options);
+    if (copydata)
+      return T.clone();
+    else
+      return T;
+  }
 }
 
 void cv2file(cv::Mat M, std::string filename) {
@@ -57,7 +93,7 @@ af::array eigen2af(Eigen::MatrixXf& E){
   return A;
 }
 
-//void eigen2cv(const Eigen::Matrix<_Tp, _rows, _cols, _options, _maxRows, _maxCols>& src, Mat& dst)
+//void eigen2cv(const Eigen::Matrix<_Tp, _rows, _cols, _options, _maxRows, _maxCols>& src, cv::Mat& dst)
 
 void eigen2file(Eigen::MatrixXf E, std::string filename) {
   std::ofstream file(filename);
@@ -93,4 +129,20 @@ void arma2cv(const arma::Mat<T>& arma_mat_in, cv::Mat_<T>& cv_mat_out) {
 
 void arma2file(arma::mat& A, std::string filename) {
   A.save(filename);
+}
+
+//---------------------------------------------------------------------------
+// LibTorch to OpenCV
+//---------------------------------------------------------------------------
+
+// Consider torch::Tensor as a float matrix
+cv::Mat libtorch2cv(torch::Tensor &Tin, bool copy=true) {
+  auto T = Tin.to(torch::kCPU);
+  cv::Mat C;
+  if (copy) {
+    cv::Mat M(T.size(0), T.size(1), CV_32FC1, T.data<float>());
+    M.copyTo(C);
+  } else
+    C = cv::Mat(T.size(0), T.size(1), CV_32FC1, T.data<float>());
+  return C;
 }
