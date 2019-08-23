@@ -32,11 +32,12 @@ find_package(OpenCV REQUIRED)
 
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 message(STATUS "OpenCV library status:")
 message(STATUS "    version: ${OpenCV_VERSION}")
 message(STATUS "    libraries: ${OpenCV_LIBS}")
 message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}\n")
 
-add_executable(dtt_test main.cpp utils.h utils_test.h)
+add_executable(dtt_test test/dtt_test.cpp test/dtt_test.h include/dtt.h)
 target_link_libraries(dtt_test Eigen3::Eigen ArrayFire::af ${ARMADILLO_LIBRARIES} ${TORCH_LIBRARIES} ${OpenCV_LIBS})

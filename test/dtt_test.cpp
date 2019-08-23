@@ -3,17 +3,7 @@
  * It supports data transfer between the following libraries:
  * Eigen, Armadillo, OpenCV, ArrayFire, LibTorch
  */
-#include <iostream>
-#include <opencv2/opencv.hpp>
-#include <Eigen/Dense>
-#include <armadillo>
-#include <arrayfire.h>
-#include <cstdio>
-#include <cstdlib>
-#include <torch/torch.h>
-
-#include "utils.h"
-#include "utils_test.h"
+#include "dtt_test.h"
 
 void debug_info() {
   std::cout << "Eigen version: " << EIGEN_WORLD_VERSION << EIGEN_MAJOR_VERSION << EIGEN_MINOR_VERSION << std::endl;
