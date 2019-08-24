@@ -15,7 +15,7 @@ void print_line() {
 
 void test_opencv_eigen() {
   print_line();
-  std::cout << "Testing OpenCV to Eigen:" << std::endl;
+  std::cout << "Testing OpenCV to Eigen (copy 3x3 matrix):" << std::endl;
   // OpenCV
   cv::Mat C(3, 3, CV_32FC1);
   cv::randn(C, 0.0f, 1.0f);
@@ -31,9 +31,11 @@ void test_opencv_eigen() {
   std::cout << "cvMat:\n" << C << std::endl;
 }
 
+// TODO: test_opencv_eigen with no-copy
+
 void test_eigen_opencv() {
   print_line();
-  std::cout << "Testing Eigen to OpenCV:" << std::endl;
+  std::cout << "Testing Eigen to OpenCV (copy 3x3 matrix):" << std::endl;
   // Eigen
   Eigen::MatrixXd E = Eigen::MatrixXd::Random(3,3);
   std::cout << "EigenMat:\n" << E << std::endl;
@@ -47,15 +49,18 @@ void test_eigen_opencv() {
   std::cout << "EigenMat:\n" << E << std::endl;
 }
 
+// TODO: test_eigen_opencv with no-copy
+
 void test_opencv_arma() {
   print_line();
-  std::cout << "Testing OpenCV to Armadillo:" << std::endl;
+  std::cout << "Testing OpenCV to Armadillo (copy 3x3 matrix):" << std::endl;
   // OpenCV
   cv::Mat C(3, 3, CV_32FC1);
   cv::randn(C, 0.0f, 1.0f);
   std::cout << "cvMat:\n" << C << std::endl;
   // Armadillo
   auto A = cv2arma<float>(C);
+  arma::inplace_trans(A);
   std::cout << "ArmaMat:\n" << A << std::endl;
   // re-check after changes
   A(0,0) = 0;
@@ -63,9 +68,11 @@ void test_opencv_arma() {
   std::cout << "cvMat:\n" << C << std::endl;
 }
 
+// TODO: test_opencv_arma with no-copy
+
 void test_arma_opencv() {
   print_line();
-  std::cout << "Testing Armadillo to OpenCV:" << std::endl;
+  std::cout << "Testing Armadillo to OpenCV (copy 3x3 matrix):" << std::endl;
   // Armadillo
   arma::mat A = arma::randu<arma::mat>(3,3);
   std::cout << "ArmaMat:\n" << A << std::endl;
@@ -79,9 +86,11 @@ void test_arma_opencv() {
   std::cout << "ArmaMat:\n" << A << std::endl;
 }
 
+// TODO: test_arma_opencv with no-copy
+
 void test_eigen_arma() {
   print_line();
-  std::cout << "Testing Eigen to Armadillo:" << std::endl;
+  std::cout << "Testing Eigen to Armadillo (copy 3x3 matrix):" << std::endl;
   // Eigen
   Eigen::MatrixXd E = Eigen::MatrixXd::Random(3,3);
   std::cout << "EigenMat:\n" << E << std::endl;
@@ -94,9 +103,11 @@ void test_eigen_arma() {
   std::cout << "EigenMat:\n" << E << std::endl;
 }
 
+// TODO: test_eigen_arma with no-copy
+
 void test_arma_eigen() {
   print_line();
-  std::cout << "Testing Armadillo to Eigen:" << std::endl;
+  std::cout << "Testing Armadillo to Eigen (copy 3x3 matrix):" << std::endl;
   // Armadillo
   arma::mat A = arma::randu<arma::mat>(3,3);
   std::cout << "ArmaMat:\n" << A << std::endl;
@@ -109,9 +120,11 @@ void test_arma_eigen() {
   std::cout << "ArmaMat:\n" << A << std::endl;
 }
 
+// TODO: test_arma_eigen with no-copy
+
 void test_eigen_af() {
   print_line();
-  std::cout << "Testing Eigen to ArrayFire:" << std::endl;
+  std::cout << "Testing Eigen to ArrayFire (copy 3x3 matrix):" << std::endl;
   // Eigen
   Eigen::MatrixXf E = Eigen::MatrixXf::Random(3,3);
   std::cout << "EigenMat:\n" << E << std::endl;
@@ -127,16 +140,19 @@ void test_eigen_af() {
   std::cout << "EigenMat:\n" << E << std::endl;
 }
 
+// TODO: test_eigen_af with no-copy
+
 void test_af_eigen() {
   print_line();
-  std::cout << "Testing ArrayFire to Eigen:" << std::endl;
+  std::cout << "Testing ArrayFire to Eigen (copy 3x3 matrix):" << std::endl;
   // ArrayFire
   af::array A = af::randu(3,3, f32);
   std::cout << "AfMat:" << std::endl;
   af_print(A);
   //float* data = A.host<float>();
   //Eigen::Map<Eigen::MatrixXf> E(data, A.dims(0), A.dims(1));
-  Eigen::MatrixXf E = af2eigen(A);
+  //Eigen::MatrixXf E = af2eigen(A);
+  auto E = af2eigen<float>(A);
   std::cout << "EigenMat:\n" << E << std::endl;
   // re-check after changes
   E(0,0) = 0;
@@ -144,6 +160,8 @@ void test_af_eigen() {
   std::cout << "AfMat:" << std::endl;
   af_print(A);
 }
+
+// TODO: test_af_eigen with no-copy
 
 void test_libtorch_eigen1() {
   print_line();
@@ -172,8 +190,7 @@ void test_libtorch_eigen2() {
   std::cout << "LibTorch:" << std::endl;
   std::cout << T << std::endl;
   // Eigen
-  float* data = T.data_ptr<float>();
-  Eigen::Map<MatrixXf_rm> E(data, T.size(0), T.size(1));
+  Eigen::Map<MatrixXrm<float>> E(T.data_ptr<float>(), T.size(0), T.size(1));
   std::cout << "EigenMat:\n" << E << std::endl;
   // re-check after changes
   E(0,0) = 0;
@@ -184,7 +201,7 @@ void test_libtorch_eigen2() {
 
 void test_opencv_libtorch1() {
   print_line();
-  std::cout << "Testing OpenCV to LibTorch #1 (copy 3x3 matrix):" << std::endl;
+  std::cout << "Testing OpenCV to LibTorch (copy 3x3 matrix):" << std::endl;
   // OpenCV
   cv::Mat C(3, 3, CV_32FC1);
   cv::randn(C, 0.0f, 1.0f);
@@ -202,7 +219,7 @@ void test_opencv_libtorch1() {
 
 void test_opencv_libtorch2() {
   print_line();
-  std::cout << "Testing OpenCV to LibTorch #1 (no-copy 3x3 matrix):" << std::endl;
+  std::cout << "Testing OpenCV to LibTorch (no-copy 3x3 matrix):" << std::endl;
   // OpenCV
   cv::Mat C(3, 3, CV_32FC1);
   cv::randn(C, 0.0f, 1.0f);
@@ -254,19 +271,59 @@ void test_libtorch_opencv2() {
   std::cout << T << std::endl;
 }
 
+void test_libtorch_arma1() {
+  print_line();
+  std::cout << "Testing LibTorch to Armadillo (copy 3x3 matrix):" << std::endl;
+  // LibTorch
+  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+  torch::Tensor T = torch::rand({3, 3});
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // Armadillo
+  auto A = libtorch2arma<float>(T);
+  arma::inplace_trans(A);
+  std::cout << "ArmaMat:\n" << A << std::endl;
+  // re-check after changes
+  A(0,0) = 0;
+  std::cout << "ArmaMat:\n" << A << std::endl;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+}
+
+void test_libtorch_arma2() {
+  print_line();
+  std::cout << "Testing LibTorch to Armadillo (no-copy 3x3 matrix):" << std::endl;
+  // LibTorch
+  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+  torch::Tensor T = torch::rand({3, 3});
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // Armadillo
+  auto A = libtorch2arma<float>(T, /*copy*/false);
+  std::cout << "ArmaMat:\n" << A << std::endl;
+  std::cout << ">>> Note that ArmaMat is transposed <<<" << std::endl;
+  // re-check after changes
+  A(0,0) = 0;
+  std::cout << "ArmaMat:\n" << A << std::endl;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+}
+
 void test_libs_conversion() {
-  test_opencv_eigen();
   test_eigen_opencv();
-  test_opencv_arma();
-  test_arma_opencv();
   test_eigen_arma();
-  test_arma_eigen();
   test_eigen_af();
+  test_arma_opencv();
+  test_arma_eigen();
+  test_opencv_eigen();
+  test_opencv_arma();
+  test_opencv_libtorch1();
+  test_opencv_libtorch2();
   test_af_eigen();
   test_libtorch_eigen1();
   test_libtorch_eigen2();
-  test_opencv_libtorch1();
-  test_opencv_libtorch2();
+  test_libtorch_arma1();
+  test_libtorch_arma2();
   test_libtorch_opencv1();
   test_libtorch_opencv2();
 }

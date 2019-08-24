@@ -23,7 +23,15 @@
 namespace dtt {
 
   // same as MatrixXf, but with row-major memory layout
-  typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatrixXf_rm;
+  //typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatrixXf_rm;
+  
+  // MatrixXrm<float> x; instead of MatrixXf_rm x;
+  template <typename T>
+  using MatrixXrm = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+  
+  // MatrixX<float> x; instead of Eigen::MatrixXf x;
+  template <typename T>
+  using MatrixX = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
   //---------------------------------------------------------------------------
   // OpenCV to Eigen, Armadillo, LibTorch, File
@@ -32,19 +40,24 @@ namespace dtt {
   //void cv2eigen(const Mat& src, Eigen::Matrix<_Tp, _rows, _cols, _options, _maxRows, _maxCols>& dst)
   
   template<typename T>
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cv2eigen(cv::Mat &C) {
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> E(C.ptr<T>(), C.rows, C.cols);
+  MatrixX<T> cv2eigen(cv::Mat &C) {
+    Eigen::Map<MatrixXrm<T>> E(C.ptr<T>(), C.rows, C.cols);
     return E;
   }
   
   template<class T>
-  arma::Mat<T> cv2arma(cv::Mat &cvMatIn) {
+  arma::Mat<T> cv2arma(cv::Mat &cvMatIn, bool copy=true) {
+    /*
+     OpenCV (cv::Mat) is Row-major order and Armadillo is Column-major order.
+     If copy=true, arma::inplace_trans(A); should be used to keep
+     the Row-major order from cv::Mat.
+     */
     //return arma::Mat<T>(cvMatIn.data, cvMatIn.rows, cvMatIn.cols, false, false);
     return arma::Mat<T>(reinterpret_cast<T*>(cvMatIn.data),
                         static_cast<arma::uword>(cvMatIn.cols),
                         static_cast<arma::uword>(cvMatIn.rows),
-                        true,
-                        true);
+                        /*copy_aux_mem*/copy,
+                        /*strict*/false);
   }
   
   torch::Tensor cv2libtorch(cv::Mat &C, bool copydata=true, bool is_cv_image=false) {
@@ -87,7 +100,7 @@ namespace dtt {
   }
   
   //---------------------------------------------------------------------------
-  // Eigen to Armadillo, OpenCV, File
+  // Eigen to Armadillo, ArrayFire, OpenCV, File
   //---------------------------------------------------------------------------
   
   arma::mat eigen2arma(Eigen::MatrixXd& E, bool copy=true) {
@@ -111,9 +124,15 @@ namespace dtt {
   //---------------------------------------------------------------------------
   // ArrayFire to Eigen
   //---------------------------------------------------------------------------
-  Eigen::MatrixXf af2eigen(af::array &A) {
-    float* data = A.host<float>();
-    Eigen::Map<Eigen::MatrixXf> E(data, A.dims(0), A.dims(1));
+//  Eigen::MatrixXf af2eigen(af::array &A) {
+//    float* data = A.host<float>();
+//    Eigen::Map<Eigen::MatrixXf> E(data, A.dims(0), A.dims(1));
+//    return E;
+//  }
+  
+  template<typename T>
+  MatrixX<T> af2eigen(af::array &A) {
+    Eigen::Map<MatrixX<T>> E(A.host<T>(), A.dims(0), A.dims(1));
     return E;
   }
   
@@ -138,8 +157,34 @@ namespace dtt {
   }
   
   //---------------------------------------------------------------------------
-  // LibTorch to OpenCV
+  // LibTorch to Eigen, Armadillo, OpenCV
   //---------------------------------------------------------------------------
+  
+  template<typename V>
+  Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic> libtorch2eigen(torch::Tensor &Tin) {
+    /*
+     LibTorch is Row-major order and Eigen is Column-major order.
+     MatrixXrm uses Eigen::RowMajor for compatibility.
+     */
+    auto T = Tin.to(torch::kCPU);
+    Eigen::Map<MatrixXrm<V>> E(T.data_ptr<V>(), T.size(0), T.size(1));
+    return E;
+  }
+  
+  template<typename V>
+  arma::Mat<V> libtorch2arma(torch::Tensor &Tin, bool copy=true) {
+    /*
+     LibTorch is Row-major order and Armadillo is Column-major order.
+     If copy=true, arma::inplace_trans(A); should be used to keep
+     the Row-major order from LibTorch.
+     */
+    auto T = Tin.to(torch::kCPU);
+    return arma::Mat<V>(reinterpret_cast<V*>(T.data_ptr<V>()),
+                        static_cast<arma::uword>(T.size(0)),
+                        static_cast<arma::uword>(T.size(1)),
+                        /*copy_aux_mem*/copy,
+                        /*strict*/false);
+  }
   
   // Consider torch::Tensor as a float matrix
   cv::Mat libtorch2cv(torch::Tensor &Tin, bool copy=true) {
@@ -151,15 +196,6 @@ namespace dtt {
     } else
       C = cv::Mat(T.size(0), T.size(1), CV_32FC1, T.data<float>());
     return C;
-  }
-  
-  template<typename V>
-  Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic> libtorch2eigen(torch::Tensor &Tin) {
-    auto T = Tin.to(torch::kCPU);
-    float* data = T.data_ptr<V>();
-    //Eigen::Map<MatrixXf_rm> E(data, T.size(0), T.size(1));
-    Eigen::Map<Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> E(data, T.size(0), T.size(1));
-    return E;
   }
 
 }
