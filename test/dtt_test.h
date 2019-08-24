@@ -145,9 +145,27 @@ void test_af_eigen() {
   af_print(A);
 }
 
-void test_libtorch_eigen() {
+void test_libtorch_eigen1() {
   print_line();
-  std::cout << "Testing LibTorch to Eigen:" << std::endl;
+  std::cout << "Testing LibTorch to Eigen (copy 3x3 matrix):" << std::endl;
+  // LibTorch
+  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+  torch::Tensor T = torch::rand({3, 3});
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // Eigen
+  auto E = libtorch2eigen<float>(T);
+  std::cout << "EigenMat:\n" << E << std::endl;
+  // re-check after changes
+  E(0,0) = 0;
+  std::cout << "EigenMat:\n" << E << std::endl;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+}
+
+void test_libtorch_eigen2() {
+  print_line();
+  std::cout << "Testing LibTorch to Eigen (no-copy 3x3 matrix):" << std::endl;
   // LibTorch
   torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
   torch::Tensor T = torch::rand({3, 3});
@@ -155,7 +173,7 @@ void test_libtorch_eigen() {
   std::cout << T << std::endl;
   // Eigen
   float* data = T.data_ptr<float>();
-  Eigen::Map<Eigen::MatrixXf> E(data, T.size(0), T.size(1));
+  Eigen::Map<MatrixXf_rm> E(data, T.size(0), T.size(1));
   std::cout << "EigenMat:\n" << E << std::endl;
   // re-check after changes
   E(0,0) = 0;
@@ -245,7 +263,8 @@ void test_libs_conversion() {
   test_arma_eigen();
   test_eigen_af();
   test_af_eigen();
-  test_libtorch_eigen();
+  test_libtorch_eigen1();
+  test_libtorch_eigen2();
   test_opencv_libtorch1();
   test_opencv_libtorch2();
   test_libtorch_opencv1();
