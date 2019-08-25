@@ -79,3 +79,5 @@ List of available functions:
 * * libtorch2arma
 * * libtorch2cv
 * * libtorch2af
+
+See **test/dtt_test.h** and **test/dtt_test.cpp** for usage examples.
