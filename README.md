@@ -17,7 +17,7 @@ Last page update: 25/08/2019
 | Armadillo |   X   |     -     |    X   |     X     |     X    |
 | OpenCV    |   X   |     X     |    -   |    TODO   |     X    |
 | ArrayFire |   X   |     X     |    X   |     -     |     X    |
-| LibTorch  |   X   |    TODO   |    X   |    TODO   |     -    |
+| LibTorch  |   X   |     X     |    X   |    TODO   |     -    |
 
 
 Tested on:
@@ -63,8 +63,9 @@ List of available functions:
 
 * From Armadillo:
 * * arma2eigen
-* * arma2af
 * * arma2cv
+* * arma2af
+* * arma2libtorch
 
 * From OpenCV:
 * * cv2eigen
