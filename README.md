@@ -12,9 +12,9 @@ Status:
 | From/To   | Eigen | Armadillo | OpenCV | ArrayFire | LibTorch |
 |-----------|:-----:|:---------:|:------:|:---------:|:--------:|
 | Eigen     |   -   |     X     |    X   |     X     |     X    |
-| Armadillo |   X   |     -     |    X   |    TODO   |     X    |
+| Armadillo |   X   |     -     |    X   |     X     |     X    |
 | OpenCV    |   X   |     X     |    -   |    TODO   |     X    |
-| ArrayFire |   X   |    TODO   |  TODO  |     -     |   TODO   |
+| ArrayFire |   X   |     X     |    X   |     -     |   TODO   |
 | LibTorch  |  TODO |    TODO   |    X   |    TODO   |     -    |
 
 
