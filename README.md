@@ -57,8 +57,9 @@ List of available functions:
 
 * From Eigen:
 * * eigen2arma
-* * eigen2af
 * * eigen2cv
+* * eigen2af
+* * eigen2libtorch
 
 * From Armadillo:
 * * arma2eigen
