@@ -13,80 +13,9 @@ void print_line() {
   std::cout << std::string(50, '-') << std::endl;
 }
 
-void test_opencv_eigen() {
-  print_line();
-  std::cout << "Testing OpenCV to Eigen (copy 3x3 matrix):" << std::endl;
-  // OpenCV
-  cv::Mat C(3, 3, CV_32FC1);
-  cv::randn(C, 0.0f, 1.0f);
-  std::cout << "cvMat:\n" << C << std::endl;
-  // Eigen
-  Eigen::MatrixXd E;
-  cv::cv2eigen(C, E);
-  //auto E = cv2eigen<float>(C);
-  std::cout << "EigenMat:\n" << E << std::endl;
-  // re-check after changes
-  E(0,0) = 0;
-  std::cout << "EigenMat:\n" << E << std::endl;
-  std::cout << "cvMat:\n" << C << std::endl;
-}
-
-// TODO: test_opencv_eigen with no-copy
-
-void test_eigen_opencv() {
-  print_line();
-  std::cout << "Testing Eigen to OpenCV (copy 3x3 matrix):" << std::endl;
-  // Eigen
-  Eigen::MatrixXd E = Eigen::MatrixXd::Random(3,3);
-  std::cout << "EigenMat:\n" << E << std::endl;
-  // OpenCV
-  cv::Mat C;
-  cv::eigen2cv(E, C);
-  std::cout << "cvMat:\n" << C << std::endl;
-  // re-check after changes
-  C.at<double>(0,0) = 0;
-  std::cout << "cvMat:\n" << C << std::endl;
-  std::cout << "EigenMat:\n" << E << std::endl;
-}
-
-// TODO: test_eigen_opencv with no-copy
-
-void test_opencv_arma() {
-  print_line();
-  std::cout << "Testing OpenCV to Armadillo (copy 3x3 matrix):" << std::endl;
-  // OpenCV
-  cv::Mat C(3, 3, CV_32FC1);
-  cv::randn(C, 0.0f, 1.0f);
-  std::cout << "cvMat:\n" << C << std::endl;
-  // Armadillo
-  auto A = cv2arma<float>(C);
-  arma::inplace_trans(A);
-  std::cout << "ArmaMat:\n" << A << std::endl;
-  // re-check after changes
-  A(0,0) = 0;
-  std::cout << "ArmaMat:\n" << A << std::endl;
-  std::cout << "cvMat:\n" << C << std::endl;
-}
-
-// TODO: test_opencv_arma with no-copy
-
-void test_arma_opencv() {
-  print_line();
-  std::cout << "Testing Armadillo to OpenCV (copy 3x3 matrix):" << std::endl;
-  // Armadillo
-  arma::mat A = arma::randu<arma::mat>(3,3);
-  std::cout << "ArmaMat:\n" << A << std::endl;
-  // OpenCV
-  cv::Mat_<double> C(3,3);
-  arma2cv<double>(A, C);
-  std::cout << "cvMat:\n" << C << std::endl;
-  // re-check after changes
-  C.at<double>(0,0) = 0;
-  std::cout << "cvMat:\n" << C << std::endl;
-  std::cout << "ArmaMat:\n" << A << std::endl;
-}
-
-// TODO: test_arma_opencv with no-copy
+//---------------------------------------------------------------------------
+// Eigen to Armadillo, OpenCV, ArrayFire
+//---------------------------------------------------------------------------
 
 void test_eigen_arma() {
   print_line();
@@ -105,22 +34,25 @@ void test_eigen_arma() {
 
 // TODO: test_eigen_arma with no-copy
 
-void test_arma_eigen() {
+void test_eigen_opencv() {
   print_line();
-  std::cout << "Testing Armadillo to Eigen (copy 3x3 matrix):" << std::endl;
-  // Armadillo
-  arma::mat A = arma::randu<arma::mat>(3,3);
-  std::cout << "ArmaMat:\n" << A << std::endl;
+  std::cout << "Testing Eigen to OpenCV (copy 3x3 matrix):" << std::endl;
   // Eigen
-  Eigen::MatrixXd E = arma2eigen(A);
+  //Eigen::MatrixXd E = Eigen::MatrixXd::Random(3,3);
+  Eigen::MatrixXf E = Eigen::MatrixXf::Random(3,3);
   std::cout << "EigenMat:\n" << E << std::endl;
+  // OpenCV
+  cv::Mat C;
+  cv::eigen2cv(E, C);
+  std::cout << "cvMat:\n" << C << std::endl;
   // re-check after changes
-  E(0,0) = 0;
+  //C.at<double>(0,0) = 0;
+  C.at<float>(0,0) = 0;
+  std::cout << "cvMat:\n" << C << std::endl;
   std::cout << "EigenMat:\n" << E << std::endl;
-  std::cout << "ArmaMat:\n" << A << std::endl;
 }
 
-// TODO: test_arma_eigen with no-copy
+// TODO: test_eigen_opencv with no-copy
 
 void test_eigen_af() {
   print_line();
@@ -142,61 +74,124 @@ void test_eigen_af() {
 
 // TODO: test_eigen_af with no-copy
 
-void test_af_eigen() {
+//---------------------------------------------------------------------------
+// Armadillo to Eigen, OpenCV, ArrayFire
+//---------------------------------------------------------------------------
+
+void test_arma_eigen() {
   print_line();
-  std::cout << "Testing ArrayFire to Eigen (copy 3x3 matrix):" << std::endl;
+  std::cout << "Testing Armadillo to Eigen (copy 3x3 matrix):" << std::endl;
+  // Armadillo
+  arma::mat A = arma::randu<arma::mat>(3,3); // arma::mat = arma::Mat<double>
+  std::cout << "ArmaMat:\n" << A << std::endl;
+  // Eigen
+  Eigen::MatrixXd E = arma2eigen(A);
+  std::cout << "EigenMat:\n" << E << std::endl;
+  // re-check after changes
+  E(0,0) = 0;
+  std::cout << "EigenMat:\n" << E << std::endl;
+  std::cout << "ArmaMat:\n" << A << std::endl;
+}
+
+// TODO: test_arma_eigen with no-copy
+
+void test_arma_opencv() {
+  print_line();
+  std::cout << "Testing Armadillo to OpenCV (copy 3x3 matrix):" << std::endl;
+  // Armadillo
+  //arma::mat A = arma::randu<arma::mat>(3,3); // arma::mat = arma::Mat<double>
+  arma::Mat<float> A = arma::randu<arma::Mat<float>>(3,3);
+  std::cout << "ArmaMat:\n" << A << std::endl;
+  // OpenCV
+  cv::Mat_<float> C(3,3);
+  arma2cv<float>(A, C);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // re-check after changes
+  C.at<float>(0,0) = 0;
+  std::cout << "cvMat:\n" << C << std::endl;
+  std::cout << "ArmaMat:\n" << A << std::endl;
+}
+
+// TODO: test_arma_opencv with no-copy
+
+void test_arma_af() {
+  print_line();
+  std::cout << "Testing Armadillo to ArrayFire (copy 3x3 matrix):" << std::endl;
+  // Armadillo
+  //arma::mat M = arma::randu<arma::mat>(3,3); // arma::mat = arma::Mat<double>
+  arma::Mat<float> M = arma::randu<arma::Mat<float>>(3,3);
+  std::cout << "ArmaMat:\n" << M << std::endl;
   // ArrayFire
-  af::array A = af::randu(3,3, f32);
+  auto A = arma2af<float>(M);
   std::cout << "AfMat:" << std::endl;
   af_print(A);
-  //float* data = A.host<float>();
-  //Eigen::Map<Eigen::MatrixXf> E(data, A.dims(0), A.dims(1));
-  //Eigen::MatrixXf E = af2eigen(A);
-  auto E = af2eigen<float>(A);
-  std::cout << "EigenMat:\n" << E << std::endl;
   // re-check after changes
-  E(0,0) = 0;
-  std::cout << "EigenMat:\n" << E << std::endl;
+  A(1,1) = 0;
   std::cout << "AfMat:" << std::endl;
   af_print(A);
+  std::cout << "ArmaMat:\n" << M << std::endl;
 }
 
-// TODO: test_af_eigen with no-copy
+//---------------------------------------------------------------------------
+// OpenCV to Eigen, Armadillo, ArrayFire, LibTorch
+//---------------------------------------------------------------------------
 
-void test_libtorch_eigen1() {
+void test_opencv_eigen() {
   print_line();
-  std::cout << "Testing LibTorch to Eigen (copy 3x3 matrix):" << std::endl;
-  // LibTorch
-  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
-  torch::Tensor T = torch::rand({3, 3});
-  std::cout << "LibTorch:" << std::endl;
-  std::cout << T << std::endl;
+  std::cout << "Testing OpenCV to Eigen (copy 3x3 matrix):" << std::endl;
+  // OpenCV
+  cv::Mat C(3, 3, CV_32FC1);
+  cv::randn(C, 0.0f, 1.0f);
+  std::cout << "cvMat:\n" << C << std::endl;
   // Eigen
-  auto E = libtorch2eigen<float>(T);
+  Eigen::MatrixXd E;
+  cv::cv2eigen(C, E);
+  //auto E = cv2eigen<float>(C);
   std::cout << "EigenMat:\n" << E << std::endl;
   // re-check after changes
   E(0,0) = 0;
   std::cout << "EigenMat:\n" << E << std::endl;
-  std::cout << "LibTorch:" << std::endl;
-  std::cout << T << std::endl;
+  std::cout << "cvMat:\n" << C << std::endl;
 }
 
-void test_libtorch_eigen2() {
+// TODO: test_opencv_eigen with no-copy
+
+void test_opencv_arma() {
   print_line();
-  std::cout << "Testing LibTorch to Eigen (no-copy 3x3 matrix):" << std::endl;
-  // LibTorch
-  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
-  torch::Tensor T = torch::rand({3, 3});
-  std::cout << "LibTorch:" << std::endl;
-  std::cout << T << std::endl;
-  // Eigen
-  Eigen::Map<MatrixXrm<float>> E(T.data_ptr<float>(), T.size(0), T.size(1));
-  std::cout << "EigenMat:\n" << E << std::endl;
+  std::cout << "Testing OpenCV to Armadillo (copy 3x3 matrix):" << std::endl;
+  // OpenCV
+  cv::Mat C(3, 3, CV_32FC1);
+  cv::randn(C, 0.0f, 1.0f);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // Armadillo
+  auto A = cv2arma<float>(C);
+  arma::inplace_trans(A);
+  std::cout << "ArmaMat:\n" << A << std::endl;
   // re-check after changes
-  E(0,0) = 0;
-  std::cout << "EigenMat:\n" << E << std::endl;
-  std::cout << "LibTorch:" << std::endl;
-  std::cout << T << std::endl;
+  A(0,0) = 0;
+  std::cout << "ArmaMat:\n" << A << std::endl;
+  std::cout << "cvMat:\n" << C << std::endl;
+}
+
+// TODO: test_opencv_arma with no-copy
+
+void test_opencv_af() {
+  print_line();
+  std::cout << "Testing OpenCV to ArrayFire (copy 3x3 matrix):" << std::endl;
+  // OpenCV
+  cv::Mat C(3, 3, CV_32FC1);
+  cv::randn(C, -1.0f, 1.0f);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // ArrayFire
+  auto A = cv2af<float>(C);
+  af::transposeInPlace(A);
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+  // re-check after changes
+  A(0,0) = 0;
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+  std::cout << "cvMat:\n" << C << std::endl;
 }
 
 void test_opencv_libtorch1() {
@@ -235,38 +230,87 @@ void test_opencv_libtorch2() {
   std::cout << "cvMat:\n" << C << std::endl;
 }
 
-void test_libtorch_opencv1() {
+//---------------------------------------------------------------------------
+// ArrayFire to Eigen, Armadillo
+//---------------------------------------------------------------------------
+
+void test_af_eigen() {
   print_line();
-  std::cout << "Testing LibTorch to OpenCV (copy 3x3 matrix):" << std::endl;
+  std::cout << "Testing ArrayFire to Eigen (copy 3x3 matrix):" << std::endl;
+  // ArrayFire
+  af::array A = af::randu(3,3, f32);
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+  //float* data = A.host<float>();
+  //Eigen::Map<Eigen::MatrixXf> E(data, A.dims(0), A.dims(1));
+  //Eigen::MatrixXf E = af2eigen(A);
+  auto E = af2eigen<float>(A);
+  std::cout << "EigenMat:\n" << E << std::endl;
+  // re-check after changes
+  E(0,0) = 0;
+  std::cout << "EigenMat:\n" << E << std::endl;
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+}
+
+// TODO: test_af_eigen with no-copy (same device)
+
+void test_af_arma() {
+  print_line();
+  std::cout << "Testing ArrayFire to Armadillo (copy 3x3 matrix):" << std::endl;
+  // ArrayFire
+  af::array A = af::randu(3,3, f32);
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+  // Armadillo
+  auto M = af2arma<float>(A);
+  //arma::inplace_trans(A);
+  std::cout << "ArmaMat:\n" << M << std::endl;
+  // re-check after changes
+  M(0,0) = 0;
+  std::cout << "ArmaMat:\n" << M << std::endl;
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+}
+
+// TODO: test_af_arma with no-copy (same device)
+
+//---------------------------------------------------------------------------
+// LibTorch to Eigen, Armadillo, OpenCV, ArrayFire
+//---------------------------------------------------------------------------
+
+void test_libtorch_eigen1() {
+  print_line();
+  std::cout << "Testing LibTorch to Eigen (copy 3x3 matrix):" << std::endl;
   // LibTorch
   torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
   torch::Tensor T = torch::rand({3, 3});
   std::cout << "LibTorch:" << std::endl;
   std::cout << T << std::endl;
-  // OpenCV
-  cv::Mat C = libtorch2cv(T);
-  std::cout << "cvMat:\n" << C << std::endl;
+  // Eigen
+  auto E = libtorch2eigen<float>(T);
+  std::cout << "EigenMat:\n" << E << std::endl;
   // re-check after changes
-  C.at<float>(0,0) = 0;
-  std::cout << "cvMat:\n" << C << std::endl;
+  E(0,0) = 0;
+  std::cout << "EigenMat:\n" << E << std::endl;
   std::cout << "LibTorch:" << std::endl;
   std::cout << T << std::endl;
 }
 
-void test_libtorch_opencv2() {
+void test_libtorch_eigen2() {
   print_line();
-  std::cout << "Testing LibTorch to OpenCV (no-copy 3x3 matrix):" << std::endl;
+  std::cout << "Testing LibTorch to Eigen (no-copy 3x3 matrix):" << std::endl;
   // LibTorch
   torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
   torch::Tensor T = torch::rand({3, 3});
   std::cout << "LibTorch:" << std::endl;
   std::cout << T << std::endl;
-  // OpenCV
-  cv::Mat C = libtorch2cv(T, false);
-  std::cout << "cvMat:\n" << C << std::endl;
+  // Eigen
+  Eigen::Map<MatrixXrm<float>> E(T.data_ptr<float>(), T.size(0), T.size(1));
+  std::cout << "EigenMat:\n" << E << std::endl;
   // re-check after changes
-  C.at<float>(0,0) = 0;
-  std::cout << "cvMat:\n" << C << std::endl;
+  E(0,0) = 0;
+  std::cout << "EigenMat:\n" << E << std::endl;
   std::cout << "LibTorch:" << std::endl;
   std::cout << T << std::endl;
 }
@@ -309,24 +353,95 @@ void test_libtorch_arma2() {
   std::cout << T << std::endl;
 }
 
+void test_libtorch_opencv1() {
+  print_line();
+  std::cout << "Testing LibTorch to OpenCV (copy 3x3 matrix):" << std::endl;
+  // LibTorch
+  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+  torch::Tensor T = torch::rand({3, 3});
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // OpenCV
+  cv::Mat C = libtorch2cv(T);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // re-check after changes
+  C.at<float>(0,0) = 0;
+  std::cout << "cvMat:\n" << C << std::endl;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+}
+
+void test_libtorch_opencv2() {
+  print_line();
+  std::cout << "Testing LibTorch to OpenCV (no-copy 3x3 matrix):" << std::endl;
+  // LibTorch
+  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+  torch::Tensor T = torch::rand({3, 3});
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // OpenCV
+  cv::Mat C = libtorch2cv(T, false);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // re-check after changes
+  C.at<float>(0,0) = 0;
+  std::cout << "cvMat:\n" << C << std::endl;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+}
+
+void test_libtorch_af() {
+  print_line();
+  std::cout << "Testing LibTorch to ArrayFire (copy 3x3 matrix):" << std::endl;
+  // LibTorch
+  torch::Device device(torch::cuda::is_available() ? torch::kCUDA : torch::kCPU);
+  torch::Tensor T = torch::rand({3, 3});
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // ArrayFire
+  auto A = libtorch2af<float>(T);
+  af::transposeInPlace(A);
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+  // re-check after changes
+  A(0,0) = 0;
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+}
+
+// TODO: test_libtorch_af with no-copy (if same device)
+
+//---------------------------------------------------------------------------
+// Call functions
+//---------------------------------------------------------------------------
+
 void test_libs_conversion() {
   test_eigen_opencv();
   test_eigen_arma();
   test_eigen_af();
-  test_arma_opencv();
   test_arma_eigen();
+  test_arma_opencv();
+  test_arma_af();
   test_opencv_eigen();
   test_opencv_arma();
+  test_opencv_af();
   test_opencv_libtorch1();
   test_opencv_libtorch2();
   test_af_eigen();
+  test_af_arma();
   test_libtorch_eigen1();
   test_libtorch_eigen2();
   test_libtorch_arma1();
   test_libtorch_arma2();
   test_libtorch_opencv1();
   test_libtorch_opencv2();
+  test_libtorch_af();
 }
+
+//---------------------------------------------------------------------------
+// Set of functions to test each library
+//---------------------------------------------------------------------------
 
 void test_opencv() {
   print_line();
