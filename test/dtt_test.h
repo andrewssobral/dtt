@@ -314,7 +314,7 @@ void test_opencv_libtorch2() {
 }
 
 //---------------------------------------------------------------------------
-// ArrayFire to Eigen, Armadillo
+// ArrayFire to Eigen, Armadillo, OpenCV
 //---------------------------------------------------------------------------
 
 void test_af_eigen() {
@@ -357,6 +357,24 @@ void test_af_arma() {
 }
 
 // TODO: test_af_arma with no-copy (same device)
+
+void test_af_cv() {
+  print_line();
+  af::info();
+  std::cout << "Testing ArrayFire to OpenCV (copy 3x3 matrix):" << std::endl;
+  // ArrayFire
+  af::array A = af::randu(2,3,f32); // first row, second column.
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+  // OpenCV
+  auto C = af2cv<float>(A);
+  std::cout << "cvMat:\n" << C << std::endl;
+  // re-check after changes
+  C.at<float>(0,0) = 0;
+  std::cout << "cvMat:\n" << C << std::endl;
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+}
 
 //---------------------------------------------------------------------------
 // LibTorch to Eigen, Armadillo, OpenCV, ArrayFire
@@ -517,6 +535,7 @@ void test_libs_conversion() {
   test_opencv_libtorch2();
   test_af_eigen();
   test_af_arma();
+  test_af_cv();
   test_libtorch_eigen1();
   test_libtorch_eigen2();
   test_libtorch_arma1();

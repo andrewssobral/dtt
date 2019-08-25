@@ -224,6 +224,13 @@ namespace dtt {
                         /*strict*/false);
   }
   
+  template<typename T>
+  cv::Mat_<T> af2cv(af::array &A) {
+    return cv::Mat_<T>(static_cast<int>(A.dims(1)),
+                       static_cast<int>(A.dims(0)),
+                       reinterpret_cast<T*>(A.host<T>())).t();
+  }
+  
   //---------------------------------------------------------------------------
   // LibTorch to Eigen, Armadillo, OpenCV, ArrayFire
   //---------------------------------------------------------------------------
