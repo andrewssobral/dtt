@@ -15,7 +15,7 @@ Last update: 25/08/2019
 | Eigen     |   -   |     X     |    X   |     X     |     X    |
 | Armadillo |   X   |     -     |    X   |     X     |     X    |
 | OpenCV    |   X   |     X     |    -   |    TODO   |     X    |
-| ArrayFire |   X   |     X     |    X   |     -     |   TODO   |
+| ArrayFire |   X   |     X     |    X   |     -     |     X    |
 | LibTorch  |  TODO |    TODO   |    X   |    TODO   |     -    |
 
 
