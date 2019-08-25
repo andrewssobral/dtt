@@ -7,8 +7,9 @@ Currently, it supports data transfer between the following libraries:
 * ArrayFire (>=3.x)
 * LibTorch (PyTorch C++) (>=1.x)
 
-Status:
-Last update: 25/08/2019
+Current status:
+
+Last page update: 25/08/2019
 
 | From/To   | Eigen | Armadillo | OpenCV | ArrayFire | LibTorch |
 |-----------|:-----:|:---------:|:------:|:---------:|:--------:|
