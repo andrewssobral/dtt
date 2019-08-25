@@ -26,12 +26,12 @@ namespace dtt {
   //typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatrixXf_rm;
   
   // MatrixXrm<float> x; instead of MatrixXf_rm x;
-  template <typename T>
-  using MatrixXrm = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+  template <typename V>
+  using MatrixXrm = typename Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
   
   // MatrixX<float> x; instead of Eigen::MatrixXf x;
-  template <typename T>
-  using MatrixX = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+  template <typename V>
+  using MatrixX = typename Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic>;
   
   //---------------------------------------------------------------------------
   // Eigen to Armadillo, OpenCV, ArrayFire, LibTorch, File
@@ -81,11 +81,11 @@ namespace dtt {
     return Eigen::Map<Eigen::MatrixXd>(A.memptr(), A.n_rows, A.n_cols);
   }
   
-  template<class T>
-  void arma2cv(const arma::Mat<T>& A, cv::Mat_<T>& C) {
-    cv::transpose(cv::Mat_<T>(static_cast<int>(A.n_cols),
+  template<class V>
+  void arma2cv(const arma::Mat<V>& A, cv::Mat_<V>& C) {
+    cv::transpose(cv::Mat_<V>(static_cast<int>(A.n_cols),
                               static_cast<int>(A.n_rows),
-                              const_cast<T*>(A.memptr())), C);
+                              const_cast<V*>(A.memptr())), C);
   };
   
   /*
@@ -103,9 +103,11 @@ namespace dtt {
    */
   //reinterpret_cast
   //af::array arma2af(arma::mat& M){
-  template<typename T>
-  af::array arma2af(arma::Mat<T>& M) {
-    af::array A(static_cast<int>(M.n_cols), static_cast<int>(M.n_rows), const_cast<T*>(M.memptr()));
+  template<typename V>
+  af::array arma2af(arma::Mat<V>& M) {
+    af::array A(static_cast<int>(M.n_cols),
+                static_cast<int>(M.n_rows),
+                const_cast<V*>(M.memptr()));
     //af::transposeInPlace(A);
     return A;
   }
@@ -128,21 +130,21 @@ namespace dtt {
   
   //void cv2eigen(const Mat& src, Eigen::Matrix<_Tp, _rows, _cols, _options, _maxRows, _maxCols>& dst)
   
-  template<typename T>
-  MatrixX<T> cv2eigen(cv::Mat &C) {
-    Eigen::Map<MatrixXrm<T>> E(C.ptr<T>(), C.rows, C.cols);
+  template<typename V>
+  MatrixX<V> cv2eigen(cv::Mat &C) {
+    Eigen::Map<MatrixXrm<V>> E(C.ptr<V>(), C.rows, C.cols);
     return E;
   }
   
-  template<class T>
-  arma::Mat<T> cv2arma(cv::Mat &C, bool copy=true) {
+  template<class V>
+  arma::Mat<V> cv2arma(cv::Mat &C, bool copy=true) {
     /*
      OpenCV (cv::Mat) is Row-major order and Armadillo is Column-major order.
      If copy=true, arma::inplace_trans(A); should be used to keep
      the Row-major order from cv::Mat.
      */
-    //return arma::Mat<T>(cvMatIn.data, cvMatIn.rows, cvMatIn.cols, false, false);
-    return arma::Mat<T>(reinterpret_cast<T*>(C.data),
+    //return arma::Mat<V>(cvMatIn.data, cvMatIn.rows, cvMatIn.cols, false, false);
+    return arma::Mat<V>(reinterpret_cast<V*>(C.data),
                         static_cast<arma::uword>(C.cols),
                         static_cast<arma::uword>(C.rows),
                         /*copy_aux_mem*/copy,
@@ -155,9 +157,9 @@ namespace dtt {
    to keep the Row-major order from OpenCV.
    Returns a copy of cv::Mat data.
    */
-  template<typename T>
+  template<typename V>
   af::array cv2af(cv::Mat &C){
-    af::array A(C.cols, C.rows, reinterpret_cast<T*>(C.data));
+    af::array A(C.cols, C.rows, reinterpret_cast<V*>(C.data));
     return A;
   }
   
@@ -201,7 +203,7 @@ namespace dtt {
   }
   
   //---------------------------------------------------------------------------
-  // ArrayFire to Eigen, Armadillo
+  // ArrayFire to Eigen, Armadillo, OpenCV, LibTorch
   //---------------------------------------------------------------------------
 //  Eigen::MatrixXf af2eigen(af::array &A) {
 //    float* data = A.host<float>();
@@ -209,26 +211,34 @@ namespace dtt {
 //    return E;
 //  }
   
-  template<typename T>
-  MatrixX<T> af2eigen(af::array &A) {
-    Eigen::Map<MatrixX<T>> E(A.host<T>(), A.dims(0), A.dims(1));
+  template<typename V>
+  MatrixX<V> af2eigen(af::array &A) {
+    Eigen::Map<MatrixX<V>> E(A.host<V>(), A.dims(0), A.dims(1));
     return E;
   }
   
-  template<typename T>
-  arma::Mat<T> af2arma(af::array &A, bool copy=true) {
-    return arma::Mat<T>(reinterpret_cast<T*>(A.host<T>()),
+  template<typename V>
+  arma::Mat<V> af2arma(af::array &A, bool copy=true) {
+    return arma::Mat<V>(reinterpret_cast<V*>(A.host<V>()),
                         static_cast<arma::uword>(A.dims(0)),
                         static_cast<arma::uword>(A.dims(1)),
                         /*copy_aux_mem*/copy,
                         /*strict*/false);
   }
   
-  template<typename T>
-  cv::Mat_<T> af2cv(af::array &A) {
-    return cv::Mat_<T>(static_cast<int>(A.dims(1)),
+  template<typename V>
+  cv::Mat_<V> af2cv(af::array &A) {
+    return cv::Mat_<V>(static_cast<int>(A.dims(1)),
                        static_cast<int>(A.dims(0)),
-                       reinterpret_cast<T*>(A.host<T>())).t();
+                       reinterpret_cast<V*>(A.host<V>())).t();
+  }
+  
+  template <typename V>
+  torch::Tensor af2libtorch(af::array &M) {
+    af::array A = af::transpose(M);
+    std::vector<int64_t> dims = {static_cast<int>(A.dims(0)), static_cast<int>(A.dims(1))};
+    auto T = torch::from_blob(reinterpret_cast<V*>(A.host<V>()), dims).clone(); //.to(torch::kCPU);
+    return T;
   }
   
   //---------------------------------------------------------------------------

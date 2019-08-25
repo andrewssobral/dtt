@@ -78,7 +78,7 @@ void test_eigen_libtorch1() { // CM = Column-major storage
   print_line();
   std::cout << "Testing Eigen(CM) to LibTorch (copy 3x3 matrix):" << std::endl;
   // Eigen
-  //MatrixX<V> = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+  //MatrixX<V> = Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic>
   //MatrixX<float> = MatrixXf
   Eigen::MatrixXf E(3,3);
 //  E << 1.010101, 2.020202, 3.030303,
@@ -314,11 +314,12 @@ void test_opencv_libtorch2() {
 }
 
 //---------------------------------------------------------------------------
-// ArrayFire to Eigen, Armadillo, OpenCV
+// ArrayFire to Eigen, Armadillo, OpenCV, LibTorch
 //---------------------------------------------------------------------------
 
 void test_af_eigen() {
   print_line();
+  //af::info();
   std::cout << "Testing ArrayFire to Eigen (copy 3x3 matrix):" << std::endl;
   // ArrayFire
   af::array A = af::randu(3,3, f32);
@@ -340,6 +341,7 @@ void test_af_eigen() {
 
 void test_af_arma() {
   print_line();
+  //af::info();
   std::cout << "Testing ArrayFire to Armadillo (copy 3x3 matrix):" << std::endl;
   // ArrayFire
   af::array A = af::randu(3,3, f32);
@@ -360,10 +362,10 @@ void test_af_arma() {
 
 void test_af_cv() {
   print_line();
-  af::info();
+  //af::info();
   std::cout << "Testing ArrayFire to OpenCV (copy 3x3 matrix):" << std::endl;
   // ArrayFire
-  af::array A = af::randu(2,3,f32); // first row, second column.
+  af::array A = af::randu(3,3,f32); // first row, second column.
   std::cout << "AfMat:" << std::endl;
   af_print(A);
   // OpenCV
@@ -372,6 +374,26 @@ void test_af_cv() {
   // re-check after changes
   C.at<float>(0,0) = 0;
   std::cout << "cvMat:\n" << C << std::endl;
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+}
+
+void test_af_libtorch() {
+  print_line();
+  //af::info();
+  std::cout << "Testing ArrayFire to LibTorch (copy 3x3 matrix):" << std::endl;
+  // ArrayFire
+  af::array A = af::randu(3,3,f32); // first row, second column.
+  std::cout << "AfMat:" << std::endl;
+  af_print(A);
+  // LibTorch
+  torch::Tensor T = af2libtorch<float>(A);
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // re-check after changes
+  T[0][0] = 0;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
   std::cout << "AfMat:" << std::endl;
   af_print(A);
 }
@@ -536,6 +558,7 @@ void test_libs_conversion() {
   test_af_eigen();
   test_af_arma();
   test_af_cv();
+  test_af_libtorch();
   test_libtorch_eigen1();
   test_libtorch_eigen2();
   test_libtorch_arma1();
