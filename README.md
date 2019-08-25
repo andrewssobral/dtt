@@ -8,6 +8,7 @@ Currently, it supports data transfer between the following libraries:
 * LibTorch (PyTorch C++) (>=1.x)
 
 Status:
+Last update: 25/08/2019
 
 | From/To   | Eigen | Armadillo | OpenCV | ArrayFire | LibTorch |
 |-----------|:-----:|:---------:|:------:|:---------:|:--------:|
@@ -52,22 +53,29 @@ using namespace dtt;
 ```
 
 List of available functions:
-* From OpenCV:
-* * cv2eigen
-* * cv2arma
-* * cv2libtorch
 
 * From Eigen:
 * * eigen2arma
 * * eigen2af
 * * eigen2cv
 
-* From ArrayFire:
-* * af2eigen
-
 * From Armadillo:
 * * arma2eigen
+* * arma2af
 * * arma2cv
 
+* From OpenCV:
+* * cv2eigen
+* * cv2arma
+* * cv2af
+* * cv2libtorch
+
+* From ArrayFire:
+* * af2eigen
+* * af2arma
+
 * From LibTorch:
+* * libtorch2eigen
+* * libtorch2arma
 * * libtorch2cv
+* * libtorch2af
