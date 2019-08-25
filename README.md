@@ -7,14 +7,16 @@ Currently, it supports data transfer between the following libraries:
 * ArrayFire (>=3.x)
 * LibTorch (PyTorch C++) (>=1.x)
 
-Status:
+Current status:
+
+Last page update: 25/08/2019
 
 | From/To   | Eigen | Armadillo | OpenCV | ArrayFire | LibTorch |
 |-----------|:-----:|:---------:|:------:|:---------:|:--------:|
 | Eigen     |   -   |     X     |    X   |     X     |     X    |
-| Armadillo |   X   |     -     |    X   |    TODO   |     X    |
+| Armadillo |   X   |     -     |    X   |     X     |     X    |
 | OpenCV    |   X   |     X     |    -   |    TODO   |     X    |
-| ArrayFire |   X   |    TODO   |  TODO  |     -     |   TODO   |
+| ArrayFire |   X   |     X     |    X   |     -     |     X    |
 | LibTorch  |  TODO |    TODO   |    X   |    TODO   |     -    |
 
 
@@ -52,22 +54,31 @@ using namespace dtt;
 ```
 
 List of available functions:
-* From OpenCV:
-* * cv2eigen
-* * cv2arma
-* * cv2libtorch
 
 * From Eigen:
 * * eigen2arma
 * * eigen2af
 * * eigen2cv
 
-* From ArrayFire:
-* * af2eigen
-
 * From Armadillo:
 * * arma2eigen
+* * arma2af
 * * arma2cv
 
+* From OpenCV:
+* * cv2eigen
+* * cv2arma
+* * cv2af
+* * cv2libtorch
+
+* From ArrayFire:
+* * af2eigen
+* * af2arma
+
 * From LibTorch:
+* * libtorch2eigen
+* * libtorch2arma
 * * libtorch2cv
+* * libtorch2af
+
+See **test/dtt_test.h** and **test/dtt_test.cpp** for usage examples.
