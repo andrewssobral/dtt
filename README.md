@@ -15,7 +15,7 @@ Last page update: 25/08/2019
 |-----------|:-----:|:---------:|:------:|:---------:|:--------:|
 | Eigen     |   -   |     X     |    X   |     X     |     X    |
 | Armadillo |   X   |     -     |    X   |     X     |     X    |
-| OpenCV    |   X   |     X     |    -   |    TODO   |     X    |
+| OpenCV    |   X   |     X     |    -   |     X     |     X    |
 | ArrayFire |   X   |     X     |    X   |     -     |     X    |
 | LibTorch  |   X   |     X     |    X   |    TODO   |     -    |
 
@@ -76,6 +76,7 @@ List of available functions:
 * From ArrayFire:
 * * af2eigen
 * * af2arma
+* * af2cv
 
 * From LibTorch:
 * * libtorch2eigen
