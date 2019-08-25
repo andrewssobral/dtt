@@ -17,7 +17,7 @@ Last page update: 25/08/2019
 | Armadillo |   X   |     -     |    X   |     X     |     X    |
 | OpenCV    |   X   |     X     |    -   |    TODO   |     X    |
 | ArrayFire |   X   |     X     |    X   |     -     |     X    |
-| LibTorch  |  TODO |    TODO   |    X   |    TODO   |     -    |
+| LibTorch  |   X   |    TODO   |    X   |    TODO   |     -    |
 
 
 Tested on:
