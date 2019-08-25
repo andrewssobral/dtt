@@ -110,6 +110,14 @@ namespace dtt {
     return A;
   }
   
+  template <typename V>
+  torch::Tensor arma2libtorch(arma::Mat<V>& M) {
+    arma::Mat<V> A = arma::trans(M); // arma::mat A = M.t(); // equivalent to arma::trans(M), but more compact
+    std::vector<int64_t> dims = {static_cast<int>(M.n_rows), static_cast<int>(M.n_cols)};
+    auto T = torch::from_blob(const_cast<V*>(A.memptr()), dims).clone(); //.to(torch::kCPU);
+    return T;
+  }
+  
   void arma2file(arma::mat& A, std::string filename) {
     A.save(filename);
   }

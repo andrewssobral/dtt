@@ -140,7 +140,7 @@ void test_eigen_libtorch3() { // RM = Row-major storage (same as LibTorch)
 }
 
 //---------------------------------------------------------------------------
-// Armadillo to Eigen, OpenCV, ArrayFire
+// Armadillo to Eigen, OpenCV, ArrayFire, LibTorch
 //---------------------------------------------------------------------------
 
 void test_arma_eigen() {
@@ -195,6 +195,24 @@ void test_arma_af() {
   std::cout << "AfMat:" << std::endl;
   af_print(A);
   std::cout << "ArmaMat:\n" << M << std::endl;
+}
+
+void test_arma_libtorch() {
+  print_line();
+  std::cout << "Testing Armadillo to LibTorch (copy 3x3 matrix):" << std::endl;
+  // Armadillo
+  //arma::mat A = arma::randu<arma::mat>(3,3); // arma::mat = arma::Mat<double>
+  arma::Mat<float> A = arma::randu<arma::Mat<float>>(3,3);
+  std::cout << "ArmaMat:\n" << A << std::endl;
+  // LibTorch
+  torch::Tensor T = arma2libtorch<float>(A);
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // re-check after changes
+  T[0][0] = 0;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  std::cout << "ArmaMat:\n" << A << std::endl;
 }
 
 //---------------------------------------------------------------------------
@@ -491,6 +509,7 @@ void test_libs_conversion() {
   test_arma_eigen();
   test_arma_opencv();
   test_arma_af();
+  test_arma_libtorch();
   test_opencv_eigen();
   test_opencv_arma();
   test_opencv_af();
