@@ -34,7 +34,7 @@ namespace dtt {
   using MatrixX = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
   
   //---------------------------------------------------------------------------
-  // Eigen to Armadillo, OpenCV, ArrayFire, File
+  // Eigen to Armadillo, OpenCV, ArrayFire, LibTorch, File
   //---------------------------------------------------------------------------
   
   arma::mat eigen2arma(Eigen::MatrixXd& E, bool copy=true) {
@@ -47,6 +47,24 @@ namespace dtt {
   }
   
   //void eigen2cv(const Eigen::Matrix<_Tp, _rows, _cols, _options, _maxRows, _maxCols>& src, cv::Mat& dst)
+  
+  template <typename V>
+  torch::Tensor eigen2libtorch(MatrixX<V> &M) {
+    Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> E(M);
+    std::vector<int64_t> dims = {E.rows(), E.cols()};
+    auto T = torch::from_blob(E.data(), dims).clone(); //.to(torch::kCPU);
+    return T;
+  }
+  
+  template <typename V>
+  torch::Tensor eigen2libtorch(MatrixXrm<V> &E, bool copydata=true) {
+    std::vector<int64_t> dims = {E.rows(), E.cols()};
+    auto T = torch::from_blob(E.data(), dims);
+    if (copydata)
+      return T.clone();
+    else
+      return T;
+  }
   
   void eigen2file(Eigen::MatrixXf E, std::string filename) {
     std::ofstream file(filename);

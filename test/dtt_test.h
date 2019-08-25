@@ -14,7 +14,7 @@ void print_line() {
 }
 
 //---------------------------------------------------------------------------
-// Eigen to Armadillo, OpenCV, ArrayFire
+// Eigen to Armadillo, OpenCV, ArrayFire, LibTorch
 //---------------------------------------------------------------------------
 
 void test_eigen_arma() {
@@ -73,6 +73,71 @@ void test_eigen_af() {
 }
 
 // TODO: test_eigen_af with no-copy
+
+void test_eigen_libtorch1() { // CM = Column-major storage
+  print_line();
+  std::cout << "Testing Eigen(CM) to LibTorch (copy 3x3 matrix):" << std::endl;
+  // Eigen
+  //MatrixX<V> = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+  //MatrixX<float> = MatrixXf
+  Eigen::MatrixXf E(3,3);
+//  E << 1.010101, 2.020202, 3.030303,
+//       4.040404, 5.050505, 6.060606,
+//       7.070707, 8.080808, 9.090909;
+  E = Eigen::MatrixXf::Random(3,3);
+  std::cout << "EigenMat:\n" << E << std::endl;
+  // LibTorch
+  torch::Tensor T = eigen2libtorch<float>(E);
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // re-check after changes
+  T[0][0] = 0;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  std::cout << "EigenMat:\n" << E << std::endl;
+}
+
+void test_eigen_libtorch2() { // RM = Row-major storage (same as LibTorch)
+  print_line();
+  std::cout << "Testing Eigen(RM) to LibTorch (copy 3x3 matrix):" << std::endl;
+  // Eigen
+  // MatrixXrm<V> = Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>
+  MatrixXrm<float> E(3,3);
+  E << 1.010101, 2.020202, 3.030303,
+  4.040404, 5.050505, 6.060606,
+  7.070707, 8.080808, 9.090909;
+  std::cout << "EigenMat:\n" << E << std::endl;
+  // LibTorch
+  torch::Tensor T = eigen2libtorch(E);
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // re-check after changes
+  T[0][0] = 0;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  std::cout << "EigenMat:\n" << E << std::endl;
+}
+
+void test_eigen_libtorch3() { // RM = Row-major storage (same as LibTorch)
+  print_line();
+  std::cout << "Testing Eigen(RM) to LibTorch (no-copy 3x3 matrix):" << std::endl;
+  // Eigen
+  // MatrixXrm<V> = Eigen::Matrix<V, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>
+  MatrixXrm<float> E(3,3);
+  E << 1.010101, 2.020202, 3.030303,
+  4.040404, 5.050505, 6.060606,
+  7.070707, 8.080808, 9.090909;
+  std::cout << "EigenMat:\n" << E << std::endl;
+  // LibTorch
+  torch::Tensor T = eigen2libtorch(E, false);
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  // re-check after changes
+  T[0][0] = 0;
+  std::cout << "LibTorch:" << std::endl;
+  std::cout << T << std::endl;
+  std::cout << "EigenMat:\n" << E << std::endl;
+}
 
 //---------------------------------------------------------------------------
 // Armadillo to Eigen, OpenCV, ArrayFire
@@ -420,6 +485,9 @@ void test_libs_conversion() {
   test_eigen_opencv();
   test_eigen_arma();
   test_eigen_af();
+  test_eigen_libtorch1();
+  test_eigen_libtorch2();
+  test_eigen_libtorch3();
   test_arma_eigen();
   test_arma_opencv();
   test_arma_af();
