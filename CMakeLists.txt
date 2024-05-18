@@ -41,3 +41,4 @@ message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}\n")
 
 add_executable(dtt_test test/dtt_test.cpp test/dtt_test.h include/dtt.h)
 target_link_libraries(dtt_test Eigen3::Eigen ArrayFire::af ${ARMADILLO_LIBRARIES} ${TORCH_LIBRARIES} ${OpenCV_LIBS})
+set_property(TARGET dtt_test PROPERTY CXX_STANDARD 17)
