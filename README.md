@@ -1,5 +1,6 @@
 # Data Transfer Tools for C++ Linear Algebra Libraries.
-DTT is a **header-only** library that provides data transfer tools between C++ linear algebra libraries.
+**dtt** is a lightweight, header-only C++ library designed to seamlessly transfer matrix and array data between major linear-algebra libraries. It supports [Eigen](https://libeigen.gitlab.io/), [Armadillo](https://arma.sourceforge.net/), [OpenCV](https://opencv.org/) (`cv::Mat`), [ArrayFire](https://arrayfire.com/), and [LibTorch](https://docs.pytorch.org/cppdocs/) (PyTorch C++), offering simple one-call conversion functions in every direction (e.g., `eigen2arma`, `cv2af`, `libtorch2eigen`, etc.). The library requires only C++17 and no build step—just include `dtt.h`. It’s primarily a convenience layer that removes the need for manual data-format juggling when working across heterogeneous numerical libraries, and includes tests and example usage in the `test/` directory.
+
 Currently, it supports data transfer between the following libraries:
 * Eigen (>=3.3.x)
 * Armadillo (>=9.x)
